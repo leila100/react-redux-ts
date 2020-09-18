@@ -1,17 +1,18 @@
 import * as React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { connect } from "react-redux";
 
 import { Todo, fetchTodos } from "../actions/index";
 import { StoreState } from "../reducers/index";
 
-const App = (): JSX.Element => {
-  const dispatch = useDispatch();
+interface AppProps {
+  todos: Todo[];
+  fetchTodos(): any;
+}
 
-  const todos: Todo[] = useSelector<StoreState, Todo[]>((state) => state.todos);
-
+const _App = ({ todos, fetchTodos }: AppProps): JSX.Element => {
   React.useEffect(() => {
-    fetchTodos()(dispatch);
-  }, [dispatch]);
+    fetchTodos();
+  }, []);
 
   return (
     <ul>
@@ -22,4 +23,10 @@ const App = (): JSX.Element => {
   );
 };
 
-export default App;
+const mapStateToProps = ({ todos }: StoreState): { todos: Todo[] } => {
+  return {
+    todos,
+  };
+};
+
+export const App = connect(mapStateToProps, { fetchTodos })(_App);
